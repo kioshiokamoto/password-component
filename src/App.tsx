@@ -7,7 +7,7 @@ function App() {
       <h1>Password component</h1>
 
       <PasswordInput
-        options={["hasNumber", "hasNoConsecutiveLetter", "hasSpecialChar"]}
+        options={["hasNumber", "hasSpecialChar", "hasNoConsecutiveLetter"]}
       />
     </>
   );

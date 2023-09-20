@@ -1,45 +1,35 @@
 import { useMemo, useState } from "react";
+
 import { PasswordInputProps as Props } from "./PasswordInput.types";
-import { PasswordRulesConst } from "./PasswordInput.types";
+import { buildClassName, getTextFromType } from "./PasswordInput.helpers";
+import { buildValidationObject } from "./PasswordInput.helpers";
+import { validatePasswordFromType } from "./PasswordInput.helpers";
+import "./PasswordInput.styles.css";
+
+import validImage from "../../assets/valid.png";
+import invalidImage from "../../assets/invalid.png";
+import viewImage from "../../assets/view.png";
+import hideImage from "../../assets/hide.png";
 
 const PasswordInput: React.FC<Props> = (props) => {
   const { toggleMask = true } = props ?? {};
   const { options: optionsProp } = props;
   const { parentClassName } = props;
 
-  const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const options = useMemo(() => [...new Set(optionsProp)], [optionsProp]);
 
   const validRules = useMemo(() => {
-    const validateObject: Partial<
-      Record<keyof typeof PasswordRulesConst, boolean>
-    > = {
-      hasNoConsecutiveLetter: false,
-      hasNumber: false,
-      hasSpecialChar: false,
-      hasUpperCase: false,
-    };
+    const validateObject = buildValidationObject();
 
     options.forEach((option) => {
-      if (option === "hasNoConsecutiveLetter") {
-        const validate = !/(.)\1/.test(password) && password.length > 1;
-        validateObject.hasNoConsecutiveLetter = validate;
-      }
-      if (option === "hasNumber") {
-        const validate = /[0-9]/.test(password);
-        validateObject.hasNumber = validate;
-      }
-      if (option === "hasSpecialChar") {
-        const validate = /[^A-Za-z0-9]/.test(password);
-        validateObject.hasSpecialChar = validate;
-      }
-      if (option === "hasUpperCase") {
-        const validate = /[A-Z]/.test(password);
-        validateObject.hasUpperCase = validate;
-      }
+      const validate = validatePasswordFromType(password, option);
+      validateObject[option] = validate;
+      validateObject.isValid = validate && validateObject.isValid;
     });
+
     return validateObject;
   }, [options, password]);
 
@@ -48,9 +38,16 @@ const PasswordInput: React.FC<Props> = (props) => {
       const isValid = validRules[option];
 
       return (
-        <div key={option}>
-          {isValid ? <div>Valid</div> : <div>Invalid</div>}
-          <span>Has {option}</span>
+        <div key={option} className="PasswordInput__rule">
+          <img
+            className={`PasswordInput__status ${buildClassName(
+              parentClassName,
+              "status"
+            )}`}
+            src={isValid ? validImage : invalidImage}
+            alt={isValid ? "valid" : "invalid"}
+          />
+          <span>{getTextFromType(option)}</span>
         </div>
       );
     });
@@ -61,22 +58,77 @@ const PasswordInput: React.FC<Props> = (props) => {
   };
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    const cleanedValue = value.replace(/\s/g, "");
+    console.log({ cleanedValue, value });
     setPassword(event.target.value);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === " ") {
+      e.preventDefault();
+    }
   };
 
   return (
     <div
-      className={`PasswordInput__container ${
-        parentClassName ? `${parentClassName}-container` : ""
-      }`}
+      className={`PasswordInput__container ${buildClassName(
+        parentClassName,
+        "container"
+      )}`}
     >
-      <div>
+      <div
+        className={`PasswordInput__input-wrapper  ${buildClassName(
+          parentClassName,
+          "input-wrapper"
+        )} `}
+      >
         <input
           {...props}
           type={showPassword ? "text" : "password"}
           onChange={onChange}
+          onKeyDown={onKeyDown}
+          className={`PasswordInput__input ${buildClassName(
+            parentClassName,
+            "input"
+          )}`}
+          placeholder="Password"
+          aria-description="Password input"
         />
-        {toggleMask ? <div onClick={handleTogglePassword}>Toggle</div> : null}
+        {toggleMask ? (
+          <div
+            onClick={handleTogglePassword}
+            className={`PasswordInput__visibility ${buildClassName(
+              parentClassName,
+              "visibility"
+            )}`}
+          >
+            {showPassword ? (
+              <img
+                className={`PasswordInput__toggle ${buildClassName(
+                  parentClassName,
+                  "toggle"
+                )}`}
+                src={hideImage}
+              />
+            ) : (
+              <img
+                className={`PasswordInput__toggle ${buildClassName(
+                  parentClassName,
+                  "toggle"
+                )}`}
+                src={viewImage}
+              />
+            )}
+          </div>
+        ) : null}
+      </div>
+      <div
+        className={`PasswordInput__rule-wrapper ${buildClassName(
+          parentClassName,
+          "rule-wrapper"
+        )}`}
+      >
         {renderRules()}
       </div>
     </div>

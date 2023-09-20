@@ -5,12 +5,16 @@ export const PasswordRulesConst = {
   hasNoConsecutiveLetter: "hasNoConsecutiveLetter",
 } as const;
 
-type PasswordRulesEnum =
+export type PasswordRulesEnum =
   (typeof PasswordRulesConst)[keyof typeof PasswordRulesConst];
 
-export interface PasswordInputProps {
+export interface InputValidation
+  extends Partial<Record<keyof typeof PasswordRulesConst, boolean>> {
+  isValid: boolean;
+}
+
+export interface PasswordInputProps extends React.HTMLProps<HTMLInputElement> {
   toggleMask?: boolean;
   options: PasswordRulesEnum[];
-  customRules?: RegExp[];
   parentClassName?: string;
 }
