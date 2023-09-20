@@ -11,6 +11,21 @@ const meta = {
   },
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/react/writing-docs/autodocs
   tags: ["autodocs"],
+  argTypes: {
+    toggleMask: {
+      defaultValue: true,
+      description: "Show toggle password mask button",
+      type: { name: "boolean", required: false },
+    },
+    parentClassName: {
+      description:
+        "Class name to modify every element of the component. You need to add css to file",
+      type: { name: "string", required: false },
+    },
+    options: {
+      description: "Password rules to validate",
+    },
+  },
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
 } satisfies Meta<typeof PasswordInput>;
 
@@ -18,9 +33,13 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const PasswordNumber: Story = {
+export const Principal: Story = {
   args: {
-    label: "PasswordInput",
-    options: ["hasNumber"],
+    options: [
+      "hasNumber",
+      "hasNoConsecutiveLetter",
+      "hasUpperCase",
+      "hasSpecialChar",
+    ],
   },
 };

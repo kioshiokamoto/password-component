@@ -6,10 +6,10 @@ import { buildValidationObject } from "./PasswordInput.helpers";
 import { validatePasswordFromType } from "./PasswordInput.helpers";
 import "./PasswordInput.styles.css";
 
-import validImage from "../../assets/valid.png";
-import invalidImage from "../../assets/invalid.png";
-import viewImage from "../../assets/view.png";
-import hideImage from "../../assets/hide.png";
+import validImage from "@/assets/valid.png";
+import invalidImage from "@/assets/invalid.png";
+import viewImage from "@/assets/view.png";
+import hideImage from "@/assets/hide.png";
 
 const PasswordInput: React.FC<Props> = (props) => {
   const { toggleMask = true } = props ?? {};
