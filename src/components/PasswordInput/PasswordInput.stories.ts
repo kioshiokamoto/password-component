@@ -23,7 +23,8 @@ const meta = {
       type: { name: "string", required: false },
     },
     options: {
-      description: "Password rules to validate",
+      description:
+        "Password rules to validate ej: `hasNumber`,`hasSpecialChar`,`hasUpperCase`,`hasNoConsecutiveLetter`",
     },
   },
   // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
